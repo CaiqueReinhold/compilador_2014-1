@@ -5,6 +5,7 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QPushButton;
 class QTextEdit;
+class CodeEditor;
 
 class MainWindow : public QMainWindow 
 {
@@ -21,7 +22,7 @@ private:
     QWidget* central_widget;
     QVBoxLayout* v_layout;
     QHBoxLayout* h_layout;
-    QTextEdit* editor;
+    CodeEditor* editor;
     QTextEdit* messages;
     QPushButton* bt_new;
     QPushButton* bt_open;

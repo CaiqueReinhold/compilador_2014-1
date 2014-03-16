@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "CodeEditor.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -21,10 +22,10 @@ MainWindow::~MainWindow()
 void MainWindow::set_up()
 {
     central_widget = new QWidget(this);
-    v_layout       = new QVBoxLayout();
-    h_layout       = new QHBoxLayout();
-    editor         = new QTextEdit();
-    messages       = new QTextEdit();
+    v_layout       = new QVBoxLayout(central_widget);
+    h_layout       = new QHBoxLayout(central_widget);
+    editor         = new CodeEditor(central_widget);
+    messages       = new QTextEdit(central_widget);
     bt_new      = new QPushButton("new", central_widget);
     bt_open     = new QPushButton("open", central_widget);
     bt_save     = new QPushButton("save", central_widget);

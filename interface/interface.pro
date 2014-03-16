@@ -8,5 +8,8 @@ INCLUDEPATH += .
 QT += widgets
 
 # Input
-HEADERS += MainWindow.h
-SOURCES += main.cpp MainWindow.cpp
+HEADERS += MainWindow.h \
+    CodeEditor.h
+SOURCES += main.cpp \
+    MainWindow.cpp \
+    CodeEditor.cpp
