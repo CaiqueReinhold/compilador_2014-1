@@ -33,6 +33,7 @@ CodeEditor::CodeEditor(QWidget* parent) :
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
     setWordWrapMode(QTextOption::NoWrap);
+    setTabStopWidth(16);//makes a tab occupie the same space as 4 spaces
 }
 
 int CodeEditor::lineNumberAreaWidth()
@@ -57,25 +58,23 @@ void CodeEditor::resizeEvent(QResizeEvent* event)
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
-#include <iostream>
-
 void CodeEditor::LineNumberAreaPaintEvent(QPaintEvent* event)
 {
     QPainter painter(lineNumberArea);
-    painter.fillRect(event->rect(), QColor(52,73,94));
+    painter.fillRect(event->rect(), QColor(240,240,240));
 
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     int bottom = top + (int) blockBoundingRect(block).height();
+    int curr_line = textCursor().block().blockNumber();
 
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
-            QColor brwhite(238, 232, 213);
-            painter.setPen(brwhite);
-            painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
-                             Qt::AlignCenter, number);
+            painter.setPen(blockNumber==curr_line?QColor(0, 0, 0):QColor(120, 120, 120));
+            painter.drawText(0, top, lineNumberArea->width()-10, fontMetrics().height(),
+                             Qt::AlignRight, number);
         }
         block = block.next();
         top = bottom;

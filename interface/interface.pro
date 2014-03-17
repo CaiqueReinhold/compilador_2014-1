@@ -6,6 +6,7 @@ TEMPLATE = app
 TARGET = interface
 INCLUDEPATH += .
 QT += widgets
+RESOURCES = images.qrc
 
 # Input
 HEADERS += MainWindow.h \
