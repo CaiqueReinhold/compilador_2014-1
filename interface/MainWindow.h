@@ -29,6 +29,7 @@ private slots:
     void actionCompile();
     void actionGenCode();
     void actionTeam();
+    void textChanged();
 
 private:
     QWidget* central_widget;
@@ -45,7 +46,8 @@ private:
     QToolButton* bt_compile;
     QToolButton* bt_gen_code;
     QToolButton* bt_team;
-    QLabel* status_text;
+
+    QString file_name;
 
     void setUp();
     void setUpButtons();

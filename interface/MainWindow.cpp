@@ -11,6 +11,12 @@
 #include <QIcon>
 #include <QFontMetrics>
 #include <QStatusBar>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QTextStream>
+
+QString MODIFIED("Modificado");
+QString NOT_MODIFIED("Não modificado");
 
 MainWindow::MainWindow() :
     QMainWindow()
@@ -20,7 +26,7 @@ MainWindow::MainWindow() :
 
 MainWindow::~MainWindow()
 {
-    delete central_widget;
+
 }
 
 void MainWindow::setUp()
@@ -30,7 +36,6 @@ void MainWindow::setUp()
     h_layout       = new QHBoxLayout(central_widget);
     editor         = new CodeEditor(central_widget);
     messages       = new QTextEdit(central_widget);
-    status_text    = new QLabel();
     bt_new      = new QToolButton(central_widget);
     bt_open     = new QToolButton(central_widget);
     bt_save     = new QToolButton(central_widget);
@@ -61,6 +66,7 @@ void MainWindow::setUp()
     connect(bt_compile, SIGNAL(clicked()), this, SLOT(actionCompile()));
     connect(bt_gen_code,SIGNAL(clicked()), this, SLOT(actionGenCode()));
     connect(bt_team,    SIGNAL(clicked()), this, SLOT(actionTeam()));
+    connect(editor,     SIGNAL(textChanged()), this, SLOT(textChanged()));
 
     QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
@@ -79,13 +85,11 @@ void MainWindow::setUp()
     v_layout->addWidget(editor);
     v_layout->addWidget(messages);
 
-    status_text->setContentsMargins(5, 0, 5, 0);
     statusBar()->setVisible(true);
-    statusBar()->addWidget(status_text);
-
     central_widget->setLayout(v_layout);
     setCentralWidget(central_widget);
     resize(1024, 720);
+    actionNew();
 }
 
 void MainWindow::setUpButtons()
@@ -157,17 +161,55 @@ void MainWindow::setUpButtons()
 
 void MainWindow::actionNew()
 {
-    //missing implementation
+    editor->setPlainText(tr(""));
+    messages->setText(tr(""));
+    statusBar()->showMessage(NOT_MODIFIED);
+    file_name = "";
 }
 
 void MainWindow::actionOpen()
 {
-    //missing implementation
+    file_name = QFileDialog::getOpenFileName(this, tr("Save File"), QString(),
+            tr("Text Files (*.txt);;C++ Files (*.cpp *.h)"));
+
+    if (!file_name.isEmpty()) {
+        QFile file(file_name);
+        if (!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::information(this, tr("Erro"), tr("O arquivo não pode ser aberto."));
+        } else {
+            QTextStream stream(&file);
+            QString line, file_content;
+            do {
+                line = stream.readLine();
+                file_content += line + "\r\n";
+            } while (!line.isNull());
+            editor->setPlainText(file_content);
+            messages->setText(tr(""));
+            statusBar()->showMessage(NOT_MODIFIED);
+            file.close();
+        }
+    }
 }
 
 void MainWindow::actionSave()
 {
-    //missing implementation
+    if (file_name.isEmpty()) {
+        file_name = QFileDialog::getSaveFileName(this, tr("Save File"), QString());
+        if (file_name.isEmpty())
+            return;
+    }
+
+    QFile file(file_name);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        QMessageBox::information(this, tr("Erro"), tr("O arquivo não pode ser aberto."));
+    } else {
+        QTextStream stream(&file);
+        QString contents = editor->toPlainText();
+        stream << contents;
+        file.close();
+        messages->setText(tr(""));
+        statusBar()->showMessage(NOT_MODIFIED);
+    }
 }
 
 void MainWindow::actionCopy()
@@ -198,4 +240,9 @@ void MainWindow::actionGenCode()
 void MainWindow::actionTeam()
 {
     messages->setText(tr("Alunos: Caíque Reinhold e William Maurício Glück"));
+}
+
+void MainWindow::textChanged()
+{
+    statusBar()->showMessage(MODIFIED);
 }

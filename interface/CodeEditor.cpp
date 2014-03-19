@@ -34,6 +34,9 @@ CodeEditor::CodeEditor(QWidget* parent) :
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
     setWordWrapMode(QTextOption::NoWrap);
     setTabStopWidth(16);//makes a tab occupie the same space as 4 spaces
+    QFont font("Monospace");
+    font.setStyleHint(QFont::TypeWriter);
+    setFont(font);
 }
 
 int CodeEditor::lineNumberAreaWidth()
