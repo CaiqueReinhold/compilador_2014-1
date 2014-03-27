@@ -86,3 +86,4 @@ void CodeEditor::LineNumberAreaPaintEvent(QPaintEvent* event)
     }
 }
 //CODE_EDITOR_IMPLEMENTATION
+

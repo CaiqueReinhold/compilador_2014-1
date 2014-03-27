@@ -170,7 +170,7 @@ void MainWindow::actionNew()
 void MainWindow::actionOpen()
 {
     file_name = QFileDialog::getOpenFileName(this, tr("Save File"), QString(),
-            tr("Text Files (*.txt);;C++ Files (*.cpp *.h)"));
+            tr("All Files (*)"));
 
     if (!file_name.isEmpty()) {
         QFile file(file_name);
@@ -185,7 +185,7 @@ void MainWindow::actionOpen()
             } while (!line.isNull());
             editor->setPlainText(file_content);
             messages->setText(tr(""));
-            statusBar()->showMessage(NOT_MODIFIED);
+            statusBar()->showMessage(NOT_MODIFIED + tr("  -  ") + file_name);
             file.close();
         }
     }
@@ -208,7 +208,7 @@ void MainWindow::actionSave()
         stream << contents;
         file.close();
         messages->setText(tr(""));
-        statusBar()->showMessage(NOT_MODIFIED);
+        statusBar()->showMessage(NOT_MODIFIED + tr("  -  ") + file_name);
     }
 }
 
