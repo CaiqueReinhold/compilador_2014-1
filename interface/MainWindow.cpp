@@ -15,6 +15,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 
+#include "Lexical.h"
+
 QString MODIFIED("Modificado");
 QString NOT_MODIFIED("Não modificado");
 
@@ -26,7 +28,6 @@ MainWindow::MainWindow() :
 
 MainWindow::~MainWindow()
 {
-
 }
 
 void MainWindow::setUp()
@@ -94,15 +95,15 @@ void MainWindow::setUp()
 
 void MainWindow::setUpButtons()
 {
-    bt_new->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    bt_open->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    bt_save->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    bt_copy->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    bt_paste->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    bt_cut->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    bt_compile->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_new->     setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_open->    setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_save->    setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_copy->    setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_paste->   setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_cut->     setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_compile-> setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     bt_gen_code->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    bt_team->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    bt_team->    setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
     bt_new->setIcon(QIcon(":res/images/new.png"));
     bt_new->setIconSize(QSize(50,50));
@@ -179,10 +180,12 @@ void MainWindow::actionOpen()
         } else {
             QTextStream stream(&file);
             QString line, file_content;
-            do {
+            line = stream.readLine();
+            while (!line.isNull()) {
+                file_content += "\r\n";
+                file_content += line;
                 line = stream.readLine();
-                file_content += line + "\r\n";
-            } while (!line.isNull());
+            }
             editor->setPlainText(file_content);
             messages->setText(tr(""));
             statusBar()->showMessage(NOT_MODIFIED + tr("  -  ") + file_name);
@@ -229,7 +232,41 @@ void MainWindow::actionCut()
 
 void MainWindow::actionCompile()
 {
-    messages->setText(tr("Compilção de programas ainda não foi implementada"));
+    QByteArray tmpBuff = editor->toPlainText().toLatin1();
+    const char* program = tmpBuff.data();
+    
+    if (!program[0]) {
+        messages->setText(tr("nenhum programa para compilar"));
+    }
+
+    Lexical lexical(program);
+    QString out;
+    Token* currToken = NULL;
+    try {
+        while ((currToken = lexical.nextToken()) != NULL) {
+            out += tr("Linha ");
+            out += QString::number(currToken->getLine());
+            out += ": ";
+            out += currToken->getClassName();
+            out += " -> ";
+            out += currToken->getLexeme().c_str();
+            out += "\n";
+        }
+        out += "Programa compilado com sucesso";
+    } catch (LexicalError& e) {
+        out = "Erro na Linha ";
+        out += QString::number(e.getLine());
+        out += ": ";
+
+        if (e.getMessage() == SCANNER_ERROR[0]) {
+            out += program[e.getPosition()];
+            out += " ";
+        }
+
+        out += e.getMessage();
+    }
+
+    messages->setText(out);
 }
 
 void MainWindow::actionGenCode()
