@@ -15,7 +15,11 @@
 #include <QMessageBox>
 #include <QTextStream>
 
+#include <exception>
+
 #include "Lexical.h"
+#include "Syntactic.h"
+#include "Semantic.h"
 
 QString MODIFIED("Modificado");
 QString NOT_MODIFIED("Não modificado");
@@ -237,33 +241,21 @@ void MainWindow::actionCompile()
     
     if (!program[0]) {
         messages->setText(tr("nenhum programa para compilar"));
+        return;
     }
 
     Lexical lexical(program);
+    Syntactic syntactic;
+    Semantic semantic;
+
     QString out;
-    Token* currToken = NULL;
     try {
-        while ((currToken = lexical.nextToken()) != NULL) {
-            out += tr("Linha ");
-            out += QString::number(currToken->getLine());
-            out += ": ";
-            out += currToken->getClassName();
-            out += " -> ";
-            out += currToken->getLexeme().c_str();
-            out += "\n";
-        }
-        out += "Programa compilado com sucesso";
+        syntactic.parse(&lexical, &semantic);
+        out = tr("Programa compilado com sucesso.");
     } catch (LexicalError& e) {
-        out = "Erro na Linha ";
-        out += QString::number(e.getLine());
-        out += ": ";
-
-        if (e.getMessage() == SCANNER_ERROR[0]) {
-            out += program[e.getPosition()];
-            out += " ";
-        }
-
-        out += e.getMessage();
+        out = e.getMessage();
+    } catch (SyntacticError& e) {
+        out = e.getMessage();
     }
 
     messages->setText(out);

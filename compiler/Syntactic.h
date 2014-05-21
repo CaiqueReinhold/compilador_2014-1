@@ -12,7 +12,7 @@
 class Syntactic
 {
 public:
-    Syntactic() : previousToken(0), currentToken(0) { }
+    Syntactic() : currentToken(0), previousToken(0) { }
 
     ~Syntactic()
     {
