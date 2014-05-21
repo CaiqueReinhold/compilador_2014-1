@@ -31,7 +31,7 @@ bool Syntactic::step() throw (AnalysisError)
         if (previousToken != 0)
             pos = previousToken->getPosition() + previousToken->getLexeme().size();
 
-        currentToken = new Token(DOLLAR, "$", pos);
+        currentToken = new Token(DOLLAR, "$", pos, 0);
     }
 
     int a = currentToken->getId();
@@ -60,7 +60,7 @@ bool Syntactic::step() throw (AnalysisError)
         }
         else
         {
-            throw SyntaticError(PARSER_ERROR[x], currentToken->getPosition());
+            throw SyntacticError(PARSER_ERROR[x], currentToken->getPosition(), currentToken->getLine());
         }
     }
     else if (isNonTerminal(x))
@@ -68,7 +68,7 @@ bool Syntactic::step() throw (AnalysisError)
         if (pushProduction(x, a))
             return false;
         else
-            throw SyntaticError(PARSER_ERROR[x], currentToken->getPosition());
+            throw SyntacticError(PARSER_ERROR[x], currentToken->getPosition(), currentToken->getLine());
     }
     else // isSemanticAction(x)
     {

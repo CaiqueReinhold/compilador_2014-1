@@ -5,7 +5,7 @@
 #include "Token.h"
 #include "Lexical.h"
 #include "Semantic.h"
-#include "SyntaticError.h"
+#include "SyntacticError.h"
 
 #include <stack>
 
