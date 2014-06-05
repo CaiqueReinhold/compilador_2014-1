@@ -39,7 +39,7 @@ Token *Lexical::nextToken() throw (LexicalError)
         }
     }
     if (endState < 0 || (endState != state && tokenForState(oldState) == -2))
-        throw LexicalError(SCANNER_ERROR[oldState], start, startLine);
+        throw LexicalError(SCANNER_ERROR[oldState], start, startLine, input[start]);
 
     position = end;
 

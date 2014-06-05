@@ -11,6 +11,8 @@ class QTextEdit;
 class CodeEditor;
 class QLabel;
 
+class Highlighter;
+
 class MainWindow : public QMainWindow 
 {
     Q_OBJECT
@@ -46,6 +48,7 @@ private:
     QToolButton* bt_compile;
     QToolButton* bt_gen_code;
     QToolButton* bt_team;
+    Highlighter* highlighter;
 
     QString file_name;
 

@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "CodeEditor.h"
+#include "Highlighter.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -50,6 +51,7 @@ void MainWindow::setUp()
     bt_compile  = new QToolButton(central_widget);
     bt_gen_code = new QToolButton(central_widget);
     bt_team     = new QToolButton(central_widget);
+    highlighter = new Highlighter(editor->document());
 
     setUpButtons();
     h_layout->addWidget(bt_new);

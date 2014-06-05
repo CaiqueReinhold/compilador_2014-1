@@ -5,12 +5,16 @@
 TEMPLATE = app
 TARGET = interface
 INCLUDEPATH += .
+INCLUDEPATH += ../compiler
 QT += widgets
 RESOURCES = images.qrc
+LIBS += -L../compiler -lcompiler
 
 # Input
 HEADERS += MainWindow.h \
-    CodeEditor.h
+    CodeEditor.h \
+    Highlighter.h
 SOURCES += main.cpp \
     MainWindow.cpp \
-    CodeEditor.cpp
+    CodeEditor.cpp \
+    Highlighter.cpp
