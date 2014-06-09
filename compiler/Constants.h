@@ -69,7 +69,7 @@ const int FIRST_SEMANTIC_ACTION = 84;
 
 extern int PARSER_TABLE[41][42];
 
-extern int PRODUCTIONS[91][10];
+extern int PRODUCTIONS[90][10];
 
 extern const char *PARSER_ERROR[84];
 

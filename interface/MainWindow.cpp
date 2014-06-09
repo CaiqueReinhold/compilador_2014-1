@@ -16,7 +16,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include <exception>
+#include <fstream>
 
 #include "Lexical.h"
 #include "Syntactic.h"
@@ -179,17 +179,22 @@ void MainWindow::actionOpen()
     file_name = QFileDialog::getOpenFileName(this, tr("Save File"), QString(),
             tr("All Files (*)"));
 
-    if (!file_name.isEmpty()) {
+    if (!file_name.isEmpty())
+    {
         QFile file(file_name);
-        if (!file.open(QIODevice::ReadOnly)) {
+        if (!file.open(QIODevice::ReadOnly))
+        {
             QMessageBox::information(this, tr("Erro"), tr("O arquivo não pode ser aberto."));
-        } else {
+        }
+        else
+        {
             QTextStream stream(&file);
             QString line, file_content;
             line = stream.readLine();
-            while (!line.isNull()) {
-                file_content += "\r\n";
+            while (!line.isNull())
+            {
                 file_content += line;
+                file_content += "\r\n";
                 line = stream.readLine();
             }
             editor->setPlainText(file_content);
@@ -202,16 +207,20 @@ void MainWindow::actionOpen()
 
 void MainWindow::actionSave()
 {
-    if (file_name.isEmpty()) {
+    if (file_name.isEmpty())
+    {
         file_name = QFileDialog::getSaveFileName(this, tr("Save File"), QString());
         if (file_name.isEmpty())
             return;
     }
 
     QFile file(file_name);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
         QMessageBox::information(this, tr("Erro"), tr("O arquivo não pode ser aberto."));
-    } else {
+    }
+    else
+    {
         QTextStream stream(&file);
         QString contents = editor->toPlainText();
         stream << contents;
@@ -241,25 +250,37 @@ void MainWindow::actionCompile()
     QByteArray tmpBuff = editor->toPlainText().toLatin1();
     const char* program = tmpBuff.data();
     
-    if (!program[0]) {
+    if (!program[0])
+    {
         messages->setText(tr("nenhum programa para compilar"));
         return;
     }
-
+    
+    std::fstream outCode("C:/Temp/out", std::fstream::out | std::fstream::trunc);
     Lexical lexical(program);
     Syntactic syntactic;
-    Semantic semantic;
+    Semantic semantic(outCode);
 
     QString out;
-    try {
+    try
+    {
         syntactic.parse(&lexical, &semantic);
         out = tr("Programa compilado com sucesso.");
-    } catch (LexicalError& e) {
-        out = e.getMessage();
-    } catch (SyntacticError& e) {
+    }
+    catch (LexicalError& e)
+    {
         out = e.getMessage();
     }
+    catch (SyntacticError& e)
+    {
+        out = e.getMessage();
+    }
+    catch (...)
+    {
+        out = tr("Unexpected error during compile time");
+    }
 
+    outCode.close();
     messages->setText(out);
 }
 
