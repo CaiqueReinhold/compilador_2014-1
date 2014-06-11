@@ -24,10 +24,8 @@ void verifyAritmeticTypes(const Token* token)
 
     if ((t1 != INT && t1 != FLOAT) ||
         (t2 != INT && t2 != FLOAT))
-    {
         throw SemanticError("Operador inválido em operação aritmética",
                             token->getPosition(), token->getLine());
-    }
 
     if (t1 == FLOAT || t2 == FLOAT)
     {
@@ -92,22 +90,20 @@ std::string action_07(const Token* token)
     type t1 = type_stack.top();
 
     if (t1 != INT && t1 != FLOAT)
-    {
         throw SemanticError("Tipo incompatível com operador '-'",
                             token->getPosition(), token->getLine());
-    }
 
     return "ldc.i4.m1\n"
            "mul\n";
 }
 
-std::string action_11(const Token* token)
+std::string action_11(const Token*)
 {
     type_stack.push(BOOL);
     return "ldc.i4.1\n";
 }
 
-std::string action_12(const Token* token)
+std::string action_12(const Token*)
 {
     type_stack.push(BOOL);
     return "ldc.i4.0\n";
@@ -116,10 +112,8 @@ std::string action_12(const Token* token)
 std::string action_13(const Token* token)
 {
 	if (type_stack.top() != BOOL)
-	{
         throw SemanticError("Tipo não booleano usado com operador '!'",
                             token->getPosition(), token->getLine());
-	}
 
     return "not\n";
 }
@@ -139,7 +133,7 @@ std::string action_14(const Token* token)
         return "call void [mscorlib]System.Console::Write(string)\n";
 }
 
-std::string action_15(const Token* token)
+std::string action_15(const Token*)
 {
     return ".assembly Hello {}\n"
            ".assembly extern mscorlib {}\n"
@@ -148,12 +142,12 @@ std::string action_15(const Token* token)
            ".entrypoint\n";
 }
 
-std::string action_16(const Token* token)
+std::string action_16(const Token*)
 {
     return "ret\n}\n}\n";
 }
 
-std::string action_17(const Token* token)
+std::string action_17(const Token*)
 {
     return "ldstr \"\\n\"\ncall void [mscorlib]System.Console::Write(string)\n";
 }
@@ -207,14 +201,10 @@ std::string action_21(const Token* token)
     type_stack.pop();
 
     if (t1 != t2)
-    {
         throw SemanticError("Operadores de tipos diferentes em comparação relacional", 
                             token->getPosition(), token->getLine());
-    }
     else
-    {
         type_stack.push(BOOL);
-    }
 
     switch (relationalOperator)
     {
@@ -231,7 +221,7 @@ std::string action_21(const Token* token)
         case t_TOKEN_37:// >
             return "cgt\n";
         case t_TOKEN_38:// >=
-            return "glt\n"
+            return "clt\n"
                    "not\n";
     }
 }
@@ -250,10 +240,8 @@ std::string action_23(const Token* token)
 {
     if (type_stack.top() != INT &&
         type_stack.top() != FLOAT)
-    {
         throw SemanticError("Tipo incompatível com operador '+'",
                             token->getPosition(), token->getLine());
-    }
 
     return "";
 }
