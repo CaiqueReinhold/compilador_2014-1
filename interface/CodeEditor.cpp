@@ -33,10 +33,12 @@ CodeEditor::CodeEditor(QWidget* parent) :
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
     setWordWrapMode(QTextOption::NoWrap);
-    setTabStopWidth(16);//makes a tab occupie the same space as 4 spaces
     QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
     setFont(font);
+    
+    //makes size of a tab the same as 4 spaces
+    setTabStopWidth(fontMetrics().width(QLatin1Char(' '))*4);
 }
 
 int CodeEditor::lineNumberAreaWidth()
