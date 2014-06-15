@@ -15,7 +15,6 @@ public:
     void executeAction(int action, const Token *token) throw (SemanticError );
 
 private:
-	std::string (*actions[23])(const Token*);
 	std::fstream& code;
 };
 

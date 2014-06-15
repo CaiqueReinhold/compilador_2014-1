@@ -5,6 +5,8 @@
 
 class Token;
 
+extern std::string (*actions[23])(const Token*);
+
 std::string action_01(const Token*);
 std::string action_02(const Token*);
 std::string action_03(const Token*);

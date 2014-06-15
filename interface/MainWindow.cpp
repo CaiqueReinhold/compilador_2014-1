@@ -17,6 +17,7 @@
 #include <QTextStream>
 
 #include <fstream>
+#include <cstdlib>
 
 #include "Lexical.h"
 #include "Syntactic.h"
@@ -255,8 +256,22 @@ void MainWindow::actionCompile()
         messages->setText(tr("nenhum programa para compilar"));
         return;
     }
+
+    if (file_name.isEmpty())
+    {
+        QMessageBox::information(this, tr("Erro"),
+            tr("Salve o programa antes de compilar."));
+        return;
+    }
     
-    std::fstream outCode("C:/Temp/out", std::fstream::out | std::fstream::trunc);
+    QString outFile = file_name;
+    int extensionIndex = outFile.lastIndexOf(QChar('.'));
+    if (extensionIndex > 0)
+        outFile.chop(extensionIndex);
+    outFile += ".il";
+
+    std::fstream outCode(outFile.toStdString().c_str(),
+                         std::fstream::out | std::fstream::trunc);
     Lexical lexical(program);
     Syntactic syntactic;
     Semantic semantic(outCode);
@@ -275,9 +290,13 @@ void MainWindow::actionCompile()
     {
         out = e.getMessage();
     }
+    catch (SemanticError& e)
+    {
+        out = e.getMessage();
+    }
     catch (...)
     {
-        out = tr("Unexpected error during compile time");
+        out = tr("Erro inesperado durente a compilação");
     }
 
     outCode.close();

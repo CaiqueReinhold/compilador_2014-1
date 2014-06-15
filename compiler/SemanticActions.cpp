@@ -5,6 +5,33 @@
 #include <stack>
 #include <sstream>
 
+std::string (*actions[23])(const Token*) = 
+{
+    action_01,
+    action_02,
+    action_03,
+    action_04,
+    action_05,
+    action_06,
+    action_07,
+    NULL,
+    NULL,
+    NULL,
+    action_11,
+    action_12,
+    action_13,
+    action_14,
+    action_15,
+    action_16,
+    action_17,
+    action_18,
+    action_19,
+    action_20,
+    action_21,
+    action_22,
+    action_23
+};
+
 enum type
 {
     INT = 1,
@@ -28,13 +55,9 @@ void verifyAritmeticTypes(const Token* token)
                             token->getPosition(), token->getLine());
 
     if (t1 == FLOAT || t2 == FLOAT)
-    {
         type_stack.push(FLOAT);
-    }
     else
-    {
         type_stack.push(INT);
-    }
 }
 
 std::string action_01(const Token* token)
@@ -80,7 +103,9 @@ std::string action_06(const Token* token)
     type_stack.push(FLOAT);
     std::stringstream ss;
     ss << "ldc.r8 ";
-    ss << token->getLexeme();
+    std::string tmpStr = token->getLexeme();
+    tmpStr[tmpStr.find_first_of(',')] = '.';
+    ss << tmpStr;
     ss << "\n";
     return ss.str(); 
 }
@@ -115,7 +140,8 @@ std::string action_13(const Token* token)
         throw SemanticError("Tipo não booleano usado com operador '!'",
                             token->getPosition(), token->getLine());
 
-    return "not\n";
+    return "ldc.i4.1\n"
+           "xor\n";
 }
 
 std::string action_14(const Token* token)
@@ -212,17 +238,20 @@ std::string action_21(const Token* token)
             return "ceq\n";
         case t_TOKEN_34:// !=
             return "ceq\n"
-                   "not\n";
+                   "ldc.i4.1\n"
+                   "xor\n";
         case t_TOKEN_35:// <
             return "clt\n";
         case t_TOKEN_36:// <=
             return "cgt\n"
-                   "not\n";
+                   "ldc.i4.1\n"
+                   "xor\n";
         case t_TOKEN_37:// >
             return "cgt\n";
         case t_TOKEN_38:// >=
             return "clt\n"
-                   "not\n";
+                   "ldc.i4.1\n"
+                   "xor\n";
     }
 }
 
