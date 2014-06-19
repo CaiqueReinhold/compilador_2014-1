@@ -14,18 +14,24 @@ public:
       : AnalysisError(msg, t->getPosition(), t->getLine()),
       	token(t) { }
 
-    const char* getMessage() const {
+    const char* getMessage() const
+    {
     	std::stringstream msg;
 
     	msg << "Erro na Linha " << getLine() << ":";
-    	if (token->getId() <= DOLLAR) {
+    	if (token->getId() <= DOLLAR)
+        {
     		//if EPSILON or DOLLAR
     		msg << " encontrado fim de programa ";
-    	} else if (token->getId() <= t_const_string) {
+    	}
+        else if (token->getId() <= t_const_string)
+        {
     		//if id, const_int, const_float or const_string
     		msg << " encontrado " << token->getClassName() << 
     			   " (" << token->getLexeme() << ") ";
-    	} else {
+    	}
+        else
+        {
             //reserved words or especial symbols
     		msg << " encontrado " << token->getLexeme() << " ";
     	}

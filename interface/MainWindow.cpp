@@ -18,6 +18,8 @@
 
 #include <fstream>
 #include <cstdlib>
+#include <Windows.h>
+#include <wchar.h>
 
 #include "Lexical.h"
 #include "Syntactic.h"
@@ -305,7 +307,29 @@ void MainWindow::actionCompile()
 
 void MainWindow::actionGenCode()
 {
-    messages->setText(tr("Geração de código ainda não foi implementada"));
+    PROCESS_INFORMATION procInfo;
+    STARTUPINFO startupInfo;
+
+    ZeroMemory(&startupInfo, sizeof(startupInfo));
+    startupInfo.cb = sizeof(startupInfo);
+
+    QString ilFile = file_name;
+    int extensionIndex = ilFile.lastIndexOf(QChar('.'));
+    if (extensionIndex > 0)
+        ilFile.chop(extensionIndex);
+    ilFile += ".il";
+
+    QString cmd = "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\ilasm.exe ";
+    cmd.append(ilFile);
+
+    wchar_t wString[4096];
+    MultiByteToWideChar(CP_ACP, 0, cmd.toStdString().c_str(), -1, wString, 4096);
+
+    CreateProcess(NULL, wString,
+                  NULL, NULL, false, 0, NULL, NULL, &startupInfo, &procInfo);
+    WaitForSingleObject(procInfo.hProcess,INFINITE);
+    CloseHandle(procInfo.hThread);
+    CloseHandle(procInfo.hProcess);
 }
 
 void MainWindow::actionTeam()
